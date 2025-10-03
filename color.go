@@ -43,8 +43,8 @@ func hasNoColorEnv() bool {
 
 // Color defines a custom color object which is defined by SGR parameters.
 type Color struct {
-	params    []Attribute
-	isNoColor bool
+	params  []Attribute
+	noColor bool
 }
 
 // Attribute defines a single SGR Code
@@ -150,9 +150,9 @@ func New(value ...Attribute) *Color {
 	}
 
 	if NoColor {
-		c.isNoColor = true
+		c.noColor = true
 	} else {
-		c.isNoColor = false
+		c.noColor = false
 	}
 
 	c.Add(value...)
@@ -203,7 +203,7 @@ func Unset() {
 
 // Set sets the SGR sequence.
 func (c *Color) Set() *Color {
-	if c.isNoColor {
+	if c.noColor {
 		return c
 	}
 
@@ -212,7 +212,7 @@ func (c *Color) Set() *Color {
 }
 
 func (c *Color) unset() {
-	if c.isNoColor {
+	if c.noColor {
 		return
 	}
 
@@ -223,7 +223,7 @@ func (c *Color) unset() {
 // a low-level function, and users should use the higher-level functions, such
 // as color.Fprint, color.Print, etc.
 func (c *Color) SetWriter(w io.Writer) *Color {
-	if c.isNoColor {
+	if c.noColor {
 		return c
 	}
 
@@ -234,7 +234,7 @@ func (c *Color) SetWriter(w io.Writer) *Color {
 // UnsetWriter resets all escape attributes and clears the output with the give
 // io.Writer. Usually should be called after SetWriter().
 func (c *Color) UnsetWriter(w io.Writer) {
-	if c.isNoColor {
+	if c.noColor {
 		return
 	}
 
@@ -417,7 +417,7 @@ func (c *Color) sequence() string {
 // wrap wraps the s string with the colors attributes. The string is ready to
 // be printed.
 func (c *Color) wrap(s string) string {
-	if c.isNoColor {
+	if c.noColor {
 		return s
 	}
 
@@ -447,13 +447,13 @@ func (c *Color) unformat() string {
 // code and still being able to output. Can be used for flags like
 // "--no-color". To enable back use EnableColor() method.
 func (c *Color) DisableColor() {
-	c.isNoColor = true
+	c.noColor = true
 }
 
 // EnableColor enables the color output. Use it in conjunction with
 // DisableColor(). Otherwise, this method has no side effects.
 func (c *Color) EnableColor() {
-	c.isNoColor = false
+	c.noColor = false
 }
 
 // Equals returns a boolean value indicating whether two colors are equal.
